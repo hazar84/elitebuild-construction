@@ -1,9 +1,8 @@
 {
-  "name": "construction-company",
+  "name": "elitebuild-construction",
   "version": "1.0.0",
   "description": "Premium construction services website",
   "main": "index.js",
-  "homepage": "https://hazar84.github.io/elitebuild-construction",
   "scripts": {
     "build": "gulp build",
     "dev": "gulp dev",
