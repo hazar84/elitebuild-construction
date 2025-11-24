@@ -1,251 +1,29 @@
-// Mobile Navigation
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.nav__hamburger');
-    const navMenu = document.querySelector('.nav__menu');
-    const menuClose = document.querySelector('.menu-close');
-    const body = document.body;
-
-    // Функция закрытия меню
-    function closeMenu() {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        body.classList.remove('no-scroll');
-    }
-
-    // Функция открытия меню
-    function openMenu() {
-        hamburger.classList.add('active');
-        navMenu.classList.add('active');
-        body.classList.add('no-scroll');
-    }
-
-    // Mobile menu toggle
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (navMenu.classList.contains('active')) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        });
-
-        // Close menu when clicking on close button
-        if (menuClose) {
-            menuClose.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeMenu();
-            });
-        }
-
-        // Close menu when clicking on links
-        document.querySelectorAll('.nav__menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                closeMenu();
-            });
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (navMenu.classList.contains('active') && 
-                !navMenu.contains(e.target) && 
-                !hamburger.contains(e.target)) {
-                closeMenu();
-            }
-        });
-
-        // Prevent menu close when clicking inside menu
-        navMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-
-        // Close menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-                closeMenu();
-            }
-        });
-    }
-
-    // Header scroll effect
-    let lastScrollY = window.scrollY;
-    const header = document.querySelector('.header');
-
-    window.addEventListener('scroll', () => {
-        if (header) {
-            const currentScrollY = window.scrollY;
-            
-            // Показываем/скрываем header при скролле
-            if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-
-            // Эффект тени и прозрачности
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(255, 255, 255, 0.98)';
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = 'none';
-            }
-
-            lastScrollY = currentScrollY;
-        }
-    });
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            
-            if (targetId === '#') return;
-            
-            const target = document.querySelector(targetId);
-            if (target) {
-                // Close mobile menu if open
-                if (window.innerWidth <= 960) {
-                    closeMenu();
-                }
-                
-                const headerHeight = header ? header.offsetHeight : 0;
-                const targetPosition = target.offsetTop - headerHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Form submission
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Сбор данных формы
-            const formData = new FormData(this);
-            const data = {
-                name: this.querySelector('input[type="text"]').value,
-                phone: this.querySelector('input[type="tel"]').value,
-                email: this.querySelector('input[type="email"]').value,
-                message: this.querySelector('textarea').value
-            };
-            
-            // Валидация
-            if (!data.name || !data.phone) {
-                showNotification('Пожалуйста, заполните обязательные поля: Имя и Телефон', 'error');
-                return;
-            }
-
-            if (!isValidPhone(data.phone)) {
-                showNotification('Пожалуйста, введите корректный номер телефона', 'error');
-                return;
-            }
-
-            if (data.email && !isValidEmail(data.email)) {
-                showNotification('Пожалуйста, введите корректный email', 'error');
-                return;
-            }
-            
-            // Симуляция отправки
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.textContent = 'Отправка...';
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
-            
-            // Имитация задержки отправки
-            setTimeout(() => {
-                showNotification('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.', 'success');
-                this.reset();
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
-            }, 2000);
-        });
-    }
-
-    // Валидация телефона
-    function isValidPhone(phone) {
-        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
-        return phoneRegex.test(phone.replace(/\s/g, ''));
-    }
-
-    // Валидация email
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    // Уведомления
-    function showNotification(message, type = 'info') {
-        // Удаляем существующие уведомления
-        const existingNotification = document.querySelector('.notification');
-        if (existingNotification) {
-            existingNotification.remove();
-        }
-
-        const notification = document.createElement('div');
-        notification.className = `notification notification--${type}`;
-        notification.innerHTML = `
+document.addEventListener("DOMContentLoaded",function(){let t=document.querySelector(".nav__hamburger"),n=document.querySelector(".nav__menu");var e=document.querySelector(".menu-close");let o=document.body;function s(){t.classList.remove("active"),n.classList.remove("active"),o.classList.remove("no-scroll")}t&&n&&(t.addEventListener("click",function(e){e.stopPropagation(),n.classList.contains("active")?s():(t.classList.add("active"),n.classList.add("active"),o.classList.add("no-scroll"))}),e&&e.addEventListener("click",function(e){e.stopPropagation(),s()}),document.querySelectorAll(".nav__menu a").forEach(e=>{e.addEventListener("click",()=>{s()})}),document.addEventListener("click",function(e){!n.classList.contains("active")||n.contains(e.target)||t.contains(e.target)||s()}),n.addEventListener("click",function(e){e.stopPropagation()}),document.addEventListener("keydown",function(e){"Escape"===e.key&&n.classList.contains("active")&&s()}));let a=window.scrollY,r=document.querySelector(".header");window.addEventListener("scroll",()=>{var e;r&&((e=window.scrollY)>a&&100<e?r.style.transform="translateY(-100%)":r.style.transform="translateY(0)",100<window.scrollY?(r.style.background="rgba(255, 255, 255, 0.98)",r.style.boxShadow="0 2px 20px rgba(0, 0, 0, 0.1)"):(r.style.background="rgba(255, 255, 255, 0.95)",r.style.boxShadow="none"),a=e)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t,e=this.getAttribute("href");"#"!==e&&(e=document.querySelector(e))&&(window.innerWidth<=960&&s(),t=r?r.offsetHeight:0,e=e.offsetTop-t-20,window.scrollTo({top:e,behavior:"smooth"}))})});e=document.querySelector(".contact-form");function i(e,t="info"){var n=document.querySelector(".notification");n&&n.remove();let o=document.createElement("div");o.className="notification notification--"+t,o.innerHTML=`
             <div class="notification__content">
-                <span class="notification__message">${message}</span>
+                <span class="notification__message">${e}</span>
                 <button class="notification__close">&times;</button>
             </div>
-        `;
-
-        // Стили для уведомления
-        notification.style.cssText = `
+        `,o.style.cssText=`
             position: fixed;
             top: 100px;
             right: 20px;
-            background: ${type === 'error' ? '#f8d7da' : type === 'success' ? '#d1edff' : '#fff3cd'};
-            border: 1px solid ${type === 'error' ? '#f5c6cb' : type === 'success' ? '#b8daff' : '#ffeaa7'};
-            color: ${type === 'error' ? '#721c24' : type === 'success' ? '#004085' : '#856404'};
+            background: ${"error"===t?"#f8d7da":"success"===t?"#d1edff":"#fff3cd"};
+            border: 1px solid ${"error"===t?"#f5c6cb":"success"===t?"#b8daff":"#ffeaa7"};
+            color: ${"error"===t?"#721c24":"success"===t?"#004085":"#856404"};
             padding: 1rem;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 10000;
             max-width: 400px;
             animation: slideInRight 0.3s ease;
-        `;
-
-        document.body.appendChild(notification);
-
-        // Кнопка закрытия
-        const closeBtn = notification.querySelector('.notification__close');
-        closeBtn.style.cssText = `
+        `,document.body.appendChild(o);n=o.querySelector(".notification__close");n.style.cssText=`
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
             margin-left: 1rem;
             color: inherit;
-        `;
-
-        closeBtn.addEventListener('click', () => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        });
-
-        // Автоматическое закрытие
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, 5000);
-    }
-
-    // Добавляем стили для анимаций уведомлений
-    const style = document.createElement('style');
-    style.textContent = `
+        `,n.addEventListener("click",()=>{o.style.animation="slideOutRight 0.3s ease",setTimeout(()=>o.remove(),300)}),setTimeout(()=>{o.parentNode&&(o.style.animation="slideOutRight 0.3s ease",setTimeout(()=>o.remove(),300))},5e3)}e&&e.addEventListener("submit",function(e){e.preventDefault();new FormData(this);e={name:this.querySelector('input[type="text"]').value,phone:this.querySelector('input[type="tel"]').value,email:this.querySelector('input[type="email"]').value,message:this.querySelector("textarea").value};if(e.name&&e.phone)if(/^[\+]?[0-9\s\-\(\)]{10,}$/.test(e.phone.replace(/\s/g,"")))if(e.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email))i("Пожалуйста, введите корректный email","error");else{let e=this.querySelector('button[type="submit"]'),t=e.textContent;e.textContent="Отправка...",e.disabled=!0,e.classList.add("loading"),setTimeout(()=>{i("Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.","success"),this.reset(),e.textContent=t,e.disabled=!1,e.classList.remove("loading")},2e3)}else i("Пожалуйста, введите корректный номер телефона","error");else i("Пожалуйста, заполните обязательные поля: Имя и Телефон","error")});e=document.createElement("style");e.textContent=`
         @keyframes slideInRight {
             from {
                 transform: translateX(100%);
@@ -277,143 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .notification__message {
             flex: 1;
         }
-    `;
-    document.head.appendChild(style);
-
-    // Intersection Observer for animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    // Observe elements for animation
-    const animateElements = document.querySelectorAll('.service-card, .portfolio-item, .about-feature, .feature');
-    
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-
-    // Counter animation for features
-    const features = document.querySelectorAll('.feature h3');
-    const featureObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                if (target.dataset.animated) return;
-                
-                target.dataset.animated = 'true';
-                const finalValue = parseInt(target.textContent);
-                let currentValue = 0;
-                const duration = 2000;
-                const increment = finalValue / (duration / 16);
-                
-                const timer = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= finalValue) {
-                        target.textContent = finalValue + '+';
-                        clearInterval(timer);
-                    } else {
-                        target.textContent = Math.floor(currentValue) + '+';
-                    }
-                }, 16);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    features.forEach(feature => {
-        featureObserver.observe(feature);
-    });
-
-    // Phone number formatting
-    const phoneInputs = document.querySelectorAll('input[type="tel"]');
-    phoneInputs.forEach(input => {
-        input.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            // Если номер пустой или слишком короткий, очищаем поле
-            if (value.length === 0) {
-                e.target.value = '';
-                return;
-            }
-            
-            // Убираем код страны 7 или 8 если есть
-            if (value.startsWith('7') || value.startsWith('8')) {
-                value = value.substring(1);
-            }
-            
-            let formattedValue = '';
-            
-            // Добавляем +7 только если есть цифры
-            if (value.length > 0) {
-                formattedValue = '+7 ';
-            }
-            
-            // Форматируем оставшиеся цифры
-            if (value.length > 0) {
-                formattedValue += value;
-            }
-            
-            // Добавляем пробелы в нужных местах
-            if (formattedValue.length > 6) {
-                formattedValue = formattedValue.substring(0, 6) + ' ' + formattedValue.substring(6);
-            }
-            if (formattedValue.length > 10) {
-                formattedValue = formattedValue.substring(0, 10) + ' ' + formattedValue.substring(10);
-            }
-            if (formattedValue.length > 13) {
-                formattedValue = formattedValue.substring(0, 13) + ' ' + formattedValue.substring(13);
-            }
-            if (formattedValue.length > 16) {
-                formattedValue = formattedValue.substring(0, 16);
-            }
-            
-            e.target.value = formattedValue;
-        });
-    });
-
-    // Active navigation link highlighting
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav__menu a[href^="#"]');
-
-    function highlightNavLink() {
-        let current = '';
-        const scrollY = window.pageYOffset;
-
-        sections.forEach(section => {
-            const sectionHeight = section.offsetHeight;
-            const sectionTop = section.offsetTop - 100;
-            
-            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                current = section.getAttribute('id');
-            }
-        });
-
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
-        });
-    }
-
-    window.addEventListener('scroll', highlightNavLink);
-
-    // Add active class styles
-    const activeStyle = document.createElement('style');
-    activeStyle.textContent = `
+    `,document.head.appendChild(e);let l=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.style.opacity="1",e.target.style.transform="translateY(0)",e.target.classList.add("visible"))})},{threshold:.1,rootMargin:"0px 0px -50px 0px"});document.querySelectorAll(".service-card, .portfolio-item, .about-feature, .feature").forEach(e=>{e.style.opacity="0",e.style.transform="translateY(30px)",e.style.transition="opacity 0.6s ease, transform 0.6s ease",l.observe(e)});e=document.querySelectorAll(".feature h3");let c=new IntersectionObserver(e=>{e.forEach(e=>{if(e.isIntersecting){let s=e.target;if(!s.dataset.animated){s.dataset.animated="true";let e=parseInt(s.textContent),t=0;let n=e/125,o=setInterval(()=>{(t+=n)>=e?(s.textContent=e+"+",clearInterval(o)):s.textContent=Math.floor(t)+"+"},16)}}})},{threshold:.5}),d=(e.forEach(e=>{c.observe(e)}),document.querySelectorAll('input[type="tel"]').forEach(e=>{e.addEventListener("input",function(t){let n=t.target.value.replace(/\D/g,"");if(0===n.length)t.target.value="";else{let e="";0<(n=n.startsWith("7")||n.startsWith("8")?n.substring(1):n).length&&(e="+7 "),0<n.length&&(e+=n),16<(e=13<(e=10<(e=6<e.length?e.substring(0,6)+" "+e.substring(6):e).length?e.substring(0,10)+" "+e.substring(10):e).length?e.substring(0,13)+" "+e.substring(13):e).length&&(e=e.substring(0,16)),t.target.value=e}})}),document.querySelectorAll("section[id]")),u=document.querySelectorAll('.nav__menu a[href^="#"]');window.addEventListener("scroll",function(){let o="",s=window.pageYOffset;d.forEach(e=>{var t=e.offsetHeight,n=e.offsetTop-100;s>=n&&s<n+t&&(o=e.getAttribute("id"))}),u.forEach(e=>{e.classList.remove("active"),e.getAttribute("href")==="#"+o&&e.classList.add("active")})});e=document.createElement("style");e.textContent=`
         .nav__menu a.active {
             color: var(--secondary-color);
         }
@@ -423,27 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 color: var(--secondary-color);
             }
         }
-    `;
-    document.head.appendChild(activeStyle);
-
-    // Portfolio image hover effect enhancement
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    portfolioItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px)';
-            this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = 'var(--shadow)';
-        });
-    });
-
-    // Back to top button
-    const backToTop = document.createElement('button');
-    backToTop.innerHTML = '↑';
-    backToTop.style.cssText = `
+    `,document.head.appendChild(e),document.querySelectorAll(".portfolio-item").forEach(e=>{e.addEventListener("mouseenter",function(){this.style.transform="translateY(-10px)",this.style.boxShadow="0 20px 40px rgba(0, 0, 0, 0.15)"}),e.addEventListener("mouseleave",function(){this.style.transform="translateY(-5px)",this.style.boxShadow="var(--shadow)"})});let m=document.createElement("button");m.innerHTML="↑",m.style.cssText=`
         position: fixed;
         bottom: 30px;
         right: 30px;
@@ -460,37 +82,4 @@ document.addEventListener('DOMContentLoaded', function() {
         transition: all 0.3s ease;
         z-index: 999;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    `;
-
-    backToTop.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-5px)';
-        this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
-    });
-
-    backToTop.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-    });
-
-    backToTop.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    document.body.appendChild(backToTop);
-
-    // Show/hide back to top button
-    window.addEventListener('scroll', function() {
-        if (window.pageYOffset > 300) {
-            backToTop.style.opacity = '1';
-            backToTop.style.visibility = 'visible';
-        } else {
-            backToTop.style.opacity = '0';
-            backToTop.style.visibility = 'hidden';
-        }
-    });
-
-    console.log('🏗️ EliteBuild - Construction company website loaded successfully');
-});
+    `,m.addEventListener("mouseenter",function(){this.style.transform="translateY(-5px)",this.style.boxShadow="0 6px 20px rgba(0,0,0,0.2)"}),m.addEventListener("mouseleave",function(){this.style.transform="translateY(0)",this.style.boxShadow="0 4px 12px rgba(0,0,0,0.15)"}),m.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"})}),document.body.appendChild(m),window.addEventListener("scroll",function(){300<window.pageYOffset?(m.style.opacity="1",m.style.visibility="visible"):(m.style.opacity="0",m.style.visibility="hidden")}),console.log("🏗️ EliteBuild - Construction company website loaded successfully")});

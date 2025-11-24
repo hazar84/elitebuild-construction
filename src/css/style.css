@@ -141,6 +141,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Hero Section */
 .hero {
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
     min-height: 100vh;
     background: linear-gradient(135deg, var(--primary-color) 0%, #2d2d2d 100%);
     color: var(--white);
@@ -151,6 +154,13 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     padding: 0 2rem;
     position: relative;
+}
+
+/* iOS Safari поддержка */
+@supports (-webkit-touch-callout: none) {
+    .hero {
+        min-height: -webkit-fill-available;
+    }
 }
 
 .hero__content {
